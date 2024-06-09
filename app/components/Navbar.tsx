@@ -34,7 +34,7 @@ export async function NavBar() {
         {/* check if user is available before rendering */}
         {user ? (
           <div>
-            <UserDropdown />
+            <UserDropdown userImage={user.picture} />
           </div>
         ) : (
           <div className="flex items-center gap-4">
