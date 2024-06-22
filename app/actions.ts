@@ -3,9 +3,9 @@
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { redirect } from 'next/navigation';
 import prisma from './lib/db';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Prisma } from '@prisma/client';
 
-export async function updateUserName(formData: FormData) {
+export async function updateUserName(prevState: any, formData: FormData) {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
 
@@ -14,25 +14,90 @@ export async function updateUserName(formData: FormData) {
   }
   const username = formData.get('username') as string;
 
-  await prisma.user.update({
-    where: {
-      id: user.id,
-    },
-    data: {
-      userName: username,
-    },
-  });
   try {
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+
+      data: {
+        userName: username,
+      },
+    });
     return {
-      message: 'Successfully updated name',
+      message: 'Username successfully updated',
+      status: 'green',
     };
   } catch (e) {
-    if (e instanceof PrismaClientKnownRequestError) {
-      if (e.code === 'P2002') {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === `P2002`) {
         return {
           message: 'This username already exist',
+          status: 'error',
         };
       }
     }
+    throw e;
+  }
+}
+
+export async function createCommunity(prevState: any, formData: FormData) {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+
+  if (!user) {
+    return redirect('/api/auth/login');
+  }
+  try {
+    const name = formData.get('name') as string;
+
+    const data = await prisma.subreddit.create({
+      data: {
+        name: name,
+        userId: user.id,
+      },
+    });
+    return redirect('/');
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === `P2002`) {
+        return {
+          message: 'Community with this Name already created',
+          status: 'error',
+        };
+      }
+    }
+    throw e;
+  }
+}
+
+export async function updateSubDescription(prevState: any, formData: FormData) {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+
+  if (!user) {
+    return redirect('/api/auth/login');
+  }
+  try {
+    const subName = formData.get('subName') as string;
+    // get description fromformdata
+    const description = formData.get('description') as string;
+    await prisma.subreddit.update({
+      where: {
+        name: subName,
+      },
+      data: {
+        description: description,
+      },
+    });
+    return {
+      status: 'green',
+      message: 'Succefully updated the description',
+    };
+  } catch (e) {
+    return {
+      status: 'error',
+      message: 'Something went wrong',
+    };
   }
 }
