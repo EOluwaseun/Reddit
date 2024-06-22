@@ -24,6 +24,8 @@ model User{
   createdSubreddits Subreddit[]
 
   createdAt DateTime @default(now())
+  // each post can have only one user, but a user can have multiple post
+  posts Post[]
 }
 
 model Subreddit{
@@ -34,4 +36,24 @@ model Subreddit{
   updatedAt DateTime @updatedAt
   User User? @relation(fields: [userId], references: [id])
   userId String?
+
+  // each subreddit can many post, but each post can only be related to one community/subreddit
+  posts Post[]
+}
+
+model Post {
+  id String @id @default(uuid())
+  title String
+  textContent Json?
+  imageString String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Subreddit Subreddit? @relation(fields: [subName], references: [name])
+  User User? @relation(fields: [userId], references: [id])
+
+  subName String?
+  userId String?
+  
+
 }

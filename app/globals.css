@@ -57,3 +57,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* delete blue border */
+.ProseMirror:focus {
+  outline: none;
+}
