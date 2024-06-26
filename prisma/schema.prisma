@@ -26,6 +26,7 @@ model User{
   createdAt DateTime @default(now())
   // each post can have only one user, but a user can have multiple post
   posts Post[]
+  Vote Vote[]
 }
 
 model Subreddit{
@@ -51,9 +52,24 @@ model Post {
   updatedAt DateTime @updatedAt
   Subreddit Subreddit? @relation(fields: [subName], references: [name])
   User User? @relation(fields: [userId], references: [id])
+  Vote Vote[]
 
   subName String?
   userId String?
   
 
+}
+
+enum TypeOfVote{
+  UP
+  DOWN
+}
+
+model Vote {
+  id String @id @default(uuid())
+  Post Post? @relation(fields: [postId], references: [id])
+  User User? @relation(fields: [userId], references: [id])
+  postId String?
+  userId String?
+  voteType TypeOfVote
 }

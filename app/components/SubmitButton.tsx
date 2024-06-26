@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, Loader2 } from 'lucide-react';
 import { useFormStatus } from 'react-dom';
 
 export function SubmitButton({ text }: { text: string }) {
@@ -32,6 +32,50 @@ export function SaveButton() {
       ) : (
         <Button size="sm" className="mt-2 w-full" type="submit">
           Save
+        </Button>
+      )}
+    </>
+  );
+}
+
+export function UpdateButton() {
+  const { pending } = useFormStatus();
+  return (
+    <>
+      {pending ? (
+        <Button
+          className="mt-2 w-full"
+          disabled
+          size={'icon'}
+          variant={'outline'}
+        >
+          <Loader2 className="mr-2 w-4 h-4 animate-spin" />
+        </Button>
+      ) : (
+        <Button variant={'outline'} size={'sm'} type="submit">
+          <ArrowUp className="w-4 h-4" />
+        </Button>
+      )}
+    </>
+  );
+}
+
+export function DownButton() {
+  const { pending } = useFormStatus();
+  return (
+    <>
+      {pending ? (
+        <Button
+          className="mt-2 w-full"
+          disabled
+          size={'icon'}
+          variant={'outline'}
+        >
+          <Loader2 className="mr-2 w-4 h-4 animate-spin" />
+        </Button>
+      ) : (
+        <Button variant={'outline'} size={'sm'} type="submit">
+          <ArrowDown className="w-4 h-4" />
         </Button>
       )}
     </>

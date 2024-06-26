@@ -87,7 +87,7 @@ export default function CreatePostRoute({
                     required
                     name="title"
                     placeholder="Title"
-                    value={title ?? undefined}
+                    value={title ?? ''}
                     onChange={(e) => setTitle(e.target.value)}
                   />
                   <TipTapEditor setJson={setJson} json={json} />
